@@ -90,9 +90,13 @@ end
 function calc_axes(y, x::Nothing, ker)
     ay = axes(y)[1]
     ak = axes(ker)[1]
+    ay_begin = first(ay)
+    ay_end = last(ay)
+    ak_begin = first(ak)
+    ak_end = last(ak)
     # y[begin] = ker[end]+x[begin]
     # y[end] = ker[begin]+x[end]
-    axw = (ay[begin] - ak[end]):(ay[end] - ak[begin])
+    axw = (ay_begin - ak_end):(ay_end - ak_begin)
     axc = axes(ker, 2)
     axb = axes(y, 3)
     return (axw, axc, axb)
@@ -103,7 +107,11 @@ function calc_axes(y, x, ker::Nothing)
     ay = axes(y, 1)
     # y[begin] = ker[end]+x[begin]
     # y[end] = ker[begin]+x[end]
-    ak = (ay[end] - ax[end]):(ay[begin] - ax[begin])
+    ay_begin = first(ay)
+    ay_end = last(ay)
+    ax_begin = first(ax)
+    ax_end = last(ax)
+    ak = (ay_end - ax_end):(ay_begin - ax_begin)
     return (ak, axes(x, 2), axes(y, 2))
 end
 
