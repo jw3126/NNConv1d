@@ -28,7 +28,7 @@ end
         out_nnlib = NNlib.conv(to_whcn(img), to_whcn(ker))
         out2 = @inferred NNConv1d.conv(img, ker)
         @test eltype(out2) === T
-        @test to_whcn(parent(out2)) ≈ out_nnlib
+        @test to_whcn(out2) ≈ out_nnlib
     end
 end
 

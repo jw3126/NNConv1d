@@ -134,7 +134,8 @@ function wcn_conv1d(y, x, ker)
     wcn_conv1d!(y_, x_, ker_, t)
 end
 
-conv(x, ker) = wcn_conv1d(nothing, x, ker)
+conv(x, ker) = conv_hole(nothing, x, ker)
+conv_hole(x, y, ker) = parent(wcn_conv1d(x,y,ker))
 
 function loopsaxes_wcn_conv1d(y, x, ker)
     loopaxes = (axes(y, 3),
@@ -156,8 +157,8 @@ function ChainRulesCore.rrule(::typeof(conv), x, ker)
     y = conv(x, ker)
     function pullback_conv(ȳ)
         (NO_FIELDS,
-            @thunk(wcn_conv1d(ȳ, nothing, ker)),
-            @thunk(wcn_conv1d(ȳ, x, nothing)),
+            @thunk(conv_hole(ȳ, nothing, ker)),
+            @thunk(conv_hole(ȳ, x, nothing)),
         )
     end
     (y, pullback_conv)
