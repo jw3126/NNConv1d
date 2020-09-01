@@ -3,6 +3,7 @@ import NNlib
 using Test
 using Random
 using ChainRulesTestUtils
+import Flux
 
 function to_whcn(x)
     nw,nc,nb = size(x)
@@ -50,4 +51,17 @@ end
         ȳ = rand!(y)
         rrule_test(NNConv1d.conv, ȳ, (x,x̄), (ker, ker̄), rtol=sqrt(eps(T)))
     end
+end
+
+@testset "test Flux training" begin
+    net = NNConv1d.Conv1d(3, 2 => 1, Flux.relu)
+    f(x) = Flux.relu.(x[2:end-1,1:1, :])
+    loss(x,y) = Flux.mse(net(x), y)
+    x = randn(10, 2, 4)
+    y = f(x)
+    data = [(x,y) for _ in 1:10000]
+    loss_before = loss(x, y)
+    Flux.train!(loss, Flux.params(net), data, Flux.ADAM(1e-3))
+    loss_after = loss(x, y)
+    @test loss_after <= 1e-3*loss_before
 end
